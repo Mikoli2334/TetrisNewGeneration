@@ -1,0 +1,49 @@
+import pygame
+
+from constants import *
+
+#This class describe game panel and its behaviour
+class Board:
+    def __init__(self,rows,cols):
+        self.rows=rows
+        self.cols=cols
+        self.grid=[[None for _ in range(cols)] for _ in range(rows)]
+
+    '''This method we use to check whether the current piece 
+    can be placed on the board in its current position '''
+
+    def is_valid_position(self,piece):
+        for x ,y in piece.get_blocks():
+            if x<0 or x>self.cols:
+                return False
+            if y<0 or y>self.rows:
+                return False
+            if self.grid[x][y] is not None:
+                return False
+        return True
+
+    def place_piece(self,piece):
+        for x,y in piece.get_blocks():
+            self.grid[y][x]=piece.color
+
+    def clear_rows(self):
+        new_grid=[]
+        for row in self.grid:
+            if any(cell is None for cell in row):
+                new_grid.append(row)
+        deleted_rows=self.rows-len(new_grid)
+        for _ in range(deleted_rows):
+            new_grid.insert(0,[None for _ in range(self.cols)])
+        self.grid=new_grid
+
+
+    def draw(self,surface):
+        for y in range(self.rows):
+            for x in range(self.cols):
+                rect_x=PLAY_AREA_X+x*GRID_SIZE
+                rect_y=PLAY_AREA_Y+y*GRID_SIZE
+                if self.grid[y][x] is not None:
+                   pygame.draw.rect(surface, self.grid[y][x], (rect_x,rect_y,GRID_SIZE,GRID_SIZE))
+                pygame.draw.rect(surface, LIGHT_GRAY, (rect_x, rect_y, GRID_SIZE, GRID_SIZE),1)
+
+        pygame.draw.rect(surface,BLACK, (PLAY_AREA_X,PLAY_AREA_Y,PLAY_AREA_WIDTH,PlAY_AREA_HEIGHT),2)
