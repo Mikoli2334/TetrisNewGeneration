@@ -19,3 +19,6 @@ class Piece:
         for r_offset,c_offset in self.shape_data[self.rotation]:
             blocks.append((self.x+c_offset,self.y+r_offset))
         return blocks
+    def rotate(self):
+        self.rotation+=1
+        self.rotation%=len(self.shape_data)

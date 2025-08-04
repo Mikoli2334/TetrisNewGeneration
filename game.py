@@ -22,6 +22,24 @@ while running:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running=False
+        elif event.type == pygame.KEYDOWN:
+            if event.key==pygame.K_RIGHT:
+                piece.x+=1
+                if not board.is_valid_position(piece):
+                    piece.x-=1
+            if event.key==pygame.K_LEFT:
+                piece.x-=1
+                if not board.is_valid_position(piece):
+                    piece.x+=1
+            if event.key==pygame.K_DOWN:
+                piece.y+=1
+                if not board.is_valid_position(piece):
+                    piece.y-=1
+        elif event.type == pygame.MOUSEBUTTONDOWN:
+            if event.button==1:
+                piece.rotate()
+                if not board.is_valid_position(piece):
+                    piece.rotation=(piece.rotation+1)%len(piece.shape_data)
 
 
     currentTime=pygame.time.get_ticks()
@@ -30,7 +48,10 @@ while running:
         if not board.is_valid_position(piece):
             piece.y-=1
             board.place_piece(piece)
+            board.clear_rows()
             piece = Piece(random.randint(0, len(SHAPES) - 1), BOARD_WIDTH_BLOCKS, BOARD_HEIGHT_BLOCKS)
+            if not board.is_valid_position(piece):
+                running=False
         last_fall_time=currentTime
 
     for x,y in piece.get_blocks():
