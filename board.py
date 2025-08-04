@@ -35,7 +35,7 @@ class Board:
         for _ in range(deleted_rows):
             new_grid.insert(0,[None for _ in range(self.cols)])
         self.grid=new_grid
-
+        return deleted_rows
 
     def draw(self,surface):
         for y in range(self.rows):

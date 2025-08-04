@@ -1,6 +1,7 @@
 import pygame
 import sys
 import random
+from UI import UI
 from board import Board
 from piece import Piece
 from constants import *
@@ -11,6 +12,7 @@ screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('Play Game')
 board=Board(BOARD_HEIGHT_BLOCKS,BOARD_WIDTH_BLOCKS)
 piece=Piece(random.randint(0,len(SHAPES)-1),BOARD_WIDTH_BLOCKS,BOARD_HEIGHT_BLOCKS)
+panel=UI(x=400,y=100)
 
 clock=pygame.time.Clock()
 running=True
@@ -48,7 +50,8 @@ while running:
         if not board.is_valid_position(piece):
             piece.y-=1
             board.place_piece(piece)
-            board.clear_rows()
+            line=board.clear_rows()
+            panel.add_score(line)
             piece = Piece(random.randint(0, len(SHAPES) - 1), BOARD_WIDTH_BLOCKS, BOARD_HEIGHT_BLOCKS)
             if not board.is_valid_position(piece):
                 running=False
@@ -62,7 +65,7 @@ while running:
             pygame.draw.rect(screen,LIGHT_GRAY,(rect_x,rect_y,GRID_SIZE,GRID_SIZE),1)
 
     board.draw(screen)
-
+    panel.draw(screen)
     pygame.display.flip()
     clock.tick(60)
 pygame.quit()
