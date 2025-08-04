@@ -9,9 +9,7 @@ class Board:
         self.cols=cols
         self.grid=[[None for _ in range(cols)] for _ in range(rows)]
 
-    '''This method we use to check whether the current piece 
-    can be placed on the board in its current position '''
-
+    # Draws every cell of the board (filled or empty) and the outer border onto the given surface.
     def is_valid_position(self,piece):
         for x ,y in piece.get_blocks():
             if x<0 or x>=self.cols:
@@ -22,11 +20,13 @@ class Board:
                 return False
         return True
 
+    # Places the piece on the grid by coloring every block it occupies.
     def place_piece(self,piece):
         for x,y in piece.get_blocks():
             if 0<=x<self.cols and 0<=y<self.rows:
              self.grid[y][x]=piece.color
 
+    # Deletes every full row, shifts the grid down, adds empty rows on top, and returns the number of cleared rows.
     def clear_rows(self):
         new_grid=[]
         for row in self.grid:
@@ -38,6 +38,7 @@ class Board:
         self.grid=new_grid
         return deleted_rows
 
+    # Draws every cell of the board (filled or empty) and the outer border onto the given surface.
     def draw(self,surface):
         for y in range(self.rows):
             for x in range(self.cols):
