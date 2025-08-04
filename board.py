@@ -14,11 +14,11 @@ class Board:
 
     def is_valid_position(self,piece):
         for x ,y in piece.get_blocks():
-            if x<0 or x>self.cols:
+            if x<0 or x>=self.cols:
                 return False
-            if y<0 or y>self.rows:
+            if y<0 or y>=self.rows:
                 return False
-            if self.grid[x][y] is not None:
+            if self.grid[y][x] is not None:
                 return False
         return True
 

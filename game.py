@@ -14,13 +14,24 @@ piece=Piece(random.randint(0,len(SHAPES)-1),BOARD_WIDTH_BLOCKS,BOARD_HEIGHT_BLOC
 
 clock=pygame.time.Clock()
 running=True
+fall_interval=500
+last_fall_time=pygame.time.get_ticks()
 while running:
     screen.fill(WHITE)
-
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running=False
+
+
+    currentTime=pygame.time.get_ticks()
+    if currentTime-last_fall_time>fall_interval:
+        piece.y+=1
+        if not board.is_valid_position(piece):
+            piece.y-=1
+            board.place_piece(piece)
+            piece = Piece(random.randint(0, len(SHAPES) - 1), BOARD_WIDTH_BLOCKS, BOARD_HEIGHT_BLOCKS)
+        last_fall_time=currentTime
 
     for x,y in piece.get_blocks():
         if y>=0:
