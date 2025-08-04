@@ -12,7 +12,9 @@ screen = pygame.display.set_mode((SCREEN_WIDTH,SCREEN_HEIGHT))
 pygame.display.set_caption('Play Game')
 board=Board(BOARD_HEIGHT_BLOCKS,BOARD_WIDTH_BLOCKS)
 piece=Piece(random.randint(0,len(SHAPES)-1),BOARD_WIDTH_BLOCKS,BOARD_HEIGHT_BLOCKS)
-panel=UI(x=400,y=100)
+next_piece=Piece(random.randint(0,len(SHAPES)-1),BOARD_WIDTH_BLOCKS,BOARD_HEIGHT_BLOCKS)
+panel=UI(x=450,y=100)
+panel.reset_score()
 
 clock=pygame.time.Clock()
 running=True
@@ -41,7 +43,12 @@ while running:
             if event.button==1:
                 piece.rotate()
                 if not board.is_valid_position(piece):
-                    piece.rotation=(piece.rotation+1)%len(piece.shape_data)
+                    piece.x+=1
+                    if not board.is_valid_position(piece):
+                        piece.x-=2
+                        if not board.is_valid_position(piece):
+                            piece.x+=1
+                            piece.rotation=(piece.rotation-1)%len(piece.shape_data)
 
 
     currentTime=pygame.time.get_ticks()
@@ -50,11 +57,12 @@ while running:
         if not board.is_valid_position(piece):
             piece.y-=1
             board.place_piece(piece)
-            line=board.clear_rows()
-            panel.add_score(line)
-            piece = Piece(random.randint(0, len(SHAPES) - 1), BOARD_WIDTH_BLOCKS, BOARD_HEIGHT_BLOCKS)
+            piece=next_piece
+            next_piece=Piece(random.randint(0,len(SHAPES)-1),BOARD_WIDTH_BLOCKS,BOARD_HEIGHT_BLOCKS)
             if not board.is_valid_position(piece):
                 running=False
+            line=board.clear_rows()
+            panel.add_score(line)
         last_fall_time=currentTime
 
     for x,y in piece.get_blocks():
@@ -65,8 +73,9 @@ while running:
             pygame.draw.rect(screen,LIGHT_GRAY,(rect_x,rect_y,GRID_SIZE,GRID_SIZE),1)
 
     board.draw(screen)
-    panel.draw(screen)
+    panel.draw(screen,next_piece)
     pygame.display.flip()
     clock.tick(60)
+panel.save_scores()
 pygame.quit()
 sys.exit()

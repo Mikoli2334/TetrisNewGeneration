@@ -24,7 +24,8 @@ class Board:
 
     def place_piece(self,piece):
         for x,y in piece.get_blocks():
-            self.grid[y][x]=piece.color
+            if 0<=x<self.cols and 0<=y<self.rows:
+             self.grid[y][x]=piece.color
 
     def clear_rows(self):
         new_grid=[]
