@@ -1,59 +1,101 @@
 import os
-
-import pygame
 import json
-from constants import BLACK, GRID_SIZE, LIGHT_GRAY
-
-'''Handles the right-side user interface: score display, next piece preview, and high score saving.'''
+import pygame
+from constants import BLACK, GRID_SIZE, WHITE
 
 class UI:
-    def __init__(self,x,y):
-        self.x=x
-        self.y=y
-        self.score=0
-        self.font = pygame.font.SysFont("Comic Sans", 24)
-        self.scores="scores.json"
-        self.highscores=[]
+    def __init__(self, x, y, scores_file="scores.json",font=None):
+        self.x = x
+        self.y = y
+        self.score = 0
+        self.level = 1
+        self.highscores = {}   # имя → очки
+        self.scores_file = scores_file
+        self.font = font or pygame.font.SysFont("Comic Sans", 28)
+        self.load_scores()
 
-        if os.path.exists(self.scores):
-            with open(self.scores,"r") as f:
-                try:
-                    self.highscores=json.load(f)
-                except json.decoder.JSONDecodeError:
-                    self.highscores=[]
-
-    # Draws the current score, next piece preview, and top 5 high scores on the screen.
-    def draw(self,surface,next_piece):
-        score_text=self.font.render(f"Points:{self.score}",True,(0,100,200))
-        surface.blit(score_text,(self.x,self.y))
-
-        text_shape=self.font.render(f"The next",True,(255,255,255))
-        surface.blit(text_shape,(self.x,self.y+60))
-
-        for r,c in next_piece.shape_data[next_piece.rotation]:
-            blockX=self.x+c*(GRID_SIZE)
-            blockY=self.y+100+r*(GRID_SIZE)
-            pygame.draw.rect(surface,next_piece.color,(blockX,blockY,GRID_SIZE,GRID_SIZE))
-            pygame.draw.rect(surface,LIGHT_GRAY,(blockX,blockY,GRID_SIZE,GRID_SIZE),1)
-
-        text_scores=self.font.render(f"Records:",True,BLACK)
-        surface.blit(text_scores,(self.x,self.y+220))
-
-        for i ,score in enumerate(self.highscores):
-            text=self.font.render(f"{i+1}.  {score}",True,BLACK)
-            surface.blit(text,(self.x,self.y+240+i*30))
-
-    # Adds points based on the number of cleared lines.
-    def add_score(self,line):
-        self.score+=line*100
-
-    # Adds current score to the high score list and saves top 5 scores to JSON.
-    def save_scores(self):
-        self.highscores.append(self.score)
-        self.highscores=sorted(self.highscores,reverse=True)[:5]
-        with open(self.scores, 'w') as f:
-            json.dump(self.highscores, f)
-
-    # Resets the current score to zero.
     def reset_score(self):
-        self.score=0
+        self.score = 0
+        self.level = 1
+
+    def add_score(self, lines_cleared: int):
+        if lines_cleared == 1:
+            self.score += 100
+        elif lines_cleared == 2:
+            self.score += 300
+        elif lines_cleared == 3:
+            self.score += 500
+        elif lines_cleared >= 4:
+            self.score += 800
+        self.level = 1 + self.score // 1000
+
+
+    def load_scores(self):
+        if os.path.exists(self.scores_file):
+            with open(self.scores_file, "r") as f:
+                try:
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        self.highscores = {f"Player{i+1}": s for i, s in enumerate(data)}
+                    elif isinstance(data, dict):
+                        self.highscores = data
+                    else:
+                        self.highscores = {}
+                except json.JSONDecodeError:
+                    self.highscores = {}
+        else:
+            self.highscores = {}
+
+    def save_scores(self, player_name):
+        if not player_name:
+            player_name = "Unknown"
+
+        if not isinstance(self.highscores, dict):
+            self.highscores = {}
+
+        best = self.highscores.get(player_name, 0)
+        if self.score > best:
+            self.highscores[player_name] = self.score
+
+        with open(self.scores_file, "w") as f:
+            json.dump(self.highscores, f, indent=4)
+
+
+    def draw(self, screen, next_piece,theme):
+        color=theme["panel_text"]
+        score_text = self.font.render(f"Score: {self.score}", True, color)
+        screen.blit(score_text, (self.x, self.y))
+
+
+        level_text = self.font.render(f"Level: {self.level}", True, color)
+        screen.blit(level_text, (self.x, self.y + 40))
+
+
+        next_text = self.font.render("Next:", True, color)
+        screen.blit(next_text, (self.x, self.y + 100))
+
+
+        if next_piece:
+
+            blocks = next_piece.get_blocks()
+            min_x = min(x for x, _ in blocks)
+            max_x = max(x for x, _ in blocks)
+            min_y = min(y for _, y in blocks)
+            max_y = max(y for _, y in blocks)
+
+            piece_width = (max_x - min_x + 1) * GRID_SIZE
+            piece_height = (max_y - min_y + 1) * GRID_SIZE
+
+            panel_center_x = self.x + 100
+            panel_top_y = self.y + 150
+
+            offset_x = panel_center_x - piece_width // 2
+            offset_y = panel_top_y
+
+            for x, y in blocks:
+                rect_x = offset_x + (x - min_x) * GRID_SIZE
+                rect_y = offset_y + (y - min_y) * GRID_SIZE
+                pygame.draw.rect(screen, next_piece.color,
+                                 (rect_x, rect_y, GRID_SIZE, GRID_SIZE))
+                pygame.draw.rect(screen, color,
+                                 (rect_x, rect_y, GRID_SIZE, GRID_SIZE), 1)

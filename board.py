@@ -39,13 +39,14 @@ class Board:
         return deleted_rows
 
     # Draws every cell of the board (filled or empty) and the outer border onto the given surface.
-    def draw(self,surface):
+    def draw(self,surface,theme):
+        pygame.draw.rect(surface,theme["play_bg"],(PLAY_AREA_X,PLAY_AREA_Y,PLAY_AREA_WIDTH,PlAY_AREA_HEIGHT))
         for y in range(self.rows):
             for x in range(self.cols):
                 rect_x=PLAY_AREA_X+x*GRID_SIZE
                 rect_y=PLAY_AREA_Y+y*GRID_SIZE
                 if self.grid[y][x] is not None:
                    pygame.draw.rect(surface, self.grid[y][x], (rect_x,rect_y,GRID_SIZE,GRID_SIZE))
-                pygame.draw.rect(surface, LIGHT_GRAY, (rect_x, rect_y, GRID_SIZE, GRID_SIZE),1)
+                pygame.draw.rect(surface, theme["grid"], (rect_x, rect_y, GRID_SIZE, GRID_SIZE),1)
 
-        pygame.draw.rect(surface,BLACK, (PLAY_AREA_X,PLAY_AREA_Y,PLAY_AREA_WIDTH,PlAY_AREA_HEIGHT),2)
+        pygame.draw.rect(surface,theme["border"], (PLAY_AREA_X,PLAY_AREA_Y,PLAY_AREA_WIDTH,PlAY_AREA_HEIGHT),2)

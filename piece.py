@@ -4,10 +4,11 @@ import random
 from constants import *
 '''This class represents a single tetromino piece, including its shape, color, position, and rotation.'''
 class Piece:
-    def __init__(self,shape_index,board_width_block,board_height_block):
+    def __init__(self,shape_index,board_width_block,board_height_block,colors):
         self.shape_index=shape_index
         self.shape_data=SHAPES[shape_index]
-        self.color=COLORS[shape_index]
+        self.colors=colors
+        self.color=self.colors[shape_index]
         self.rotation=0
         current_shape=self.shape_data[self.rotation]
         max_col_offset=max(block[0] for block in current_shape) if current_shape else 0
@@ -25,3 +26,4 @@ class Piece:
     def rotate(self):
         self.rotation+=1
         self.rotation%=len(self.shape_data)
+        self.color=self.colors[self.shape_index]
