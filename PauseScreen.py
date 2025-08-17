@@ -23,7 +23,7 @@ class PauseScreen:
     def draw(self):
         t = self.theme
         overlay = pygame.Surface(self.screen.get_size(), pygame.SRCALPHA)
-        overlay.fill((0, 0, 0, 180))  # полупрозрачное затемнение
+        overlay.fill((0, 0, 0, 180))
         self.screen.blit(overlay, (0, 0))
 
         title = self.title_font.render("PAUSED", True, t["accent"])

@@ -28,8 +28,8 @@ class SettingsScreen:
             r = pygame.Rect(w//2 - 150 + i*140, base_y, 120, 40)
             self.diff_rects.append((key, label, r))
 
-        # === THEME (новый блок) ===
-        self.theme_keys = ORDERED_THEME_KEYS  # ["Classic","Neon","Pastel","Dark"]
+
+        self.theme_keys = ORDERED_THEME_KEYS
         self.theme_rects = []
         base_y2 = 460
         for i, key in enumerate(self.theme_keys):
@@ -51,7 +51,7 @@ class SettingsScreen:
         title = self.title_font.render("SETTINGS", True, t["accent"])
         self.screen.blit(title, title.get_rect(center=(self.screen.get_width()//2, 120)))
 
-        # Music label + toggle
+
         label = self.font.render("Music:", True, t["text"])
         self.screen.blit(label, (self.music_slider.x - 120, self.music_slider.y - 20))
         toggle_color = (100, 180, 100) if self.settings["music_enabled"] else (120, 120, 120)
@@ -59,19 +59,19 @@ class SettingsScreen:
         circle_x = self.music_toggle_rect.right - 16 if self.settings["music_enabled"] else self.music_toggle_rect.left + 16
         pygame.draw.circle(self.screen, (240, 240, 240), (circle_x, self.music_toggle_rect.centery), 12)
 
-        # Music volume
+
         pygame.draw.rect(self.screen, t["grid"], self.music_slider)
         knob_x = self._value_to_x(self.music_slider, self.settings["music_volume"])
         pygame.draw.circle(self.screen, t["text"], (knob_x, self.music_slider.centery), self.knob_radius)
 
-        # SFX
+
         label = self.font.render("SFX:", True, t["text"])
         self.screen.blit(label, (self.sfx_slider.x - 120, self.sfx_slider.y - 20))
         pygame.draw.rect(self.screen, t["grid"], self.sfx_slider)
         knob_x = self._value_to_x(self.sfx_slider, self.settings["sfx_volume"])
         pygame.draw.circle(self.screen, t["text"], (knob_x, self.sfx_slider.centery), self.knob_radius)
 
-        # Difficulty
+
         label = self.font.render("Difficulty:", True, t["text"])
         self.screen.blit(label, (self.music_slider.x - 120, 340))
         for key, text, rect in self.diff_rects:
@@ -81,7 +81,7 @@ class SettingsScreen:
             pygame.draw.rect(self.screen, t["button_border"], rect, 2, border_radius=8)
             self.screen.blit(self.font.render(text, True, t["text"]), self.font.render(text, True, t["text"]).get_rect(center=rect.center))
 
-        # Theme picker (новый)
+
         label = self.font.render("Theme:", True, t["text"])
         self.screen.blit(label, (self.music_slider.x - 120, 420))
         for key, rect in self.theme_rects:
@@ -91,7 +91,7 @@ class SettingsScreen:
             pygame.draw.rect(self.screen, t["button_border"], rect, 2, border_radius=8)
             self.screen.blit(self.font.render(key, True, t["text"]), self.font.render(key, True, t["text"]).get_rect(center=rect.center))
 
-        # Back
+
         mouse_pos = pygame.mouse.get_pos()
         self._hover_back = self.back_btn.collidepoint(mouse_pos)
         bg = t["button_hover"] if self._hover_back else t["button_idle"]

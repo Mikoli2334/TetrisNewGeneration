@@ -111,7 +111,7 @@ class Game:
 
 
     def _apply_settings(self, settings):
-        # Музыка
+
         if self.state == "playing":
             if settings["music_enabled"]:
                 if not pygame.mixer.music.get_busy():
@@ -127,13 +127,13 @@ class Game:
             else:
                 pygame.mixer.music.stop()
 
-        # SFX
+
         self._apply_sfx_volume()
 
-        # Сложность
+
         self._apply_difficulty(settings["difficulty"])
 
-        # ### ТЕМА
+
         new_theme = self._load_theme(settings.get("theme", "Classic"))
         if new_theme is not self.theme:
             self.theme = new_theme
@@ -155,7 +155,7 @@ class Game:
             self.pause_screen.title_font = self.fonts.get("h1", self.pause_screen.title_font)
             self.pause_screen.btn_font = self.fonts.get("text", self.pause_screen.btn_font)
 
-            # Обновим экраны/шрифты
+
             self.menu.theme = self.theme
             self.menu.title_font = self.fonts.get("title", self.menu.title_font)
             self.menu.font = self.fonts.get("menu", self.menu.font)
@@ -164,12 +164,12 @@ class Game:
             self.settings_screen.title_font = self.fonts.get("h1", self.settings_screen.title_font)
             self.settings_screen.font = self.fonts.get("text", self.settings_screen.font)
 
-            # Панель
+
             self.panel.font = self.fonts.get("text", self.panel.font)
 
 
 
-            # Новые цвета для следующих фигур
+
             self.piece.color = self.theme["piece_colors"][self.piece.shape_index]
             self.next_piece = Piece(random.randint(0, len(SHAPES) - 1), BOARD_WIDTH_BLOCKS, BOARD_HEIGHT_BLOCKS,
                                     self.theme["piece_colors"])
@@ -182,7 +182,7 @@ class Game:
         elif difficulty == "hard":
             self.fall_interval = 300
 
-    # ---------- GAME LOOP ----------
+
     def handle_events(self):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -246,13 +246,13 @@ class Game:
             self.last_fall_time = current_time
 
     def draw(self):
-        # общий фон
+
         self.screen.fill(self.theme["bg"])
 
-        # рисуем падающую фигуру поверх поля, поэтому сначала поле:
+
         self.board.draw(self.screen, self.theme)
 
-        # падающая фигура
+
         for x, y in self.piece.get_blocks():
             if y >= 0:
                 rect_x = PLAY_AREA_X + x * GRID_SIZE
@@ -260,7 +260,7 @@ class Game:
                 pygame.draw.rect(self.screen, self.piece.color, (rect_x, rect_y, GRID_SIZE, GRID_SIZE))
                 pygame.draw.rect(self.screen, self.theme["grid"], (rect_x, rect_y, GRID_SIZE, GRID_SIZE), 1)
 
-        # панель
+
         self.panel.draw(self.screen, self.next_piece, self.theme)
         pygame.display.flip()
 
@@ -317,7 +317,7 @@ class Game:
         pygame.quit()
         sys.exit()
 
-    # ---------- CALLBACKS ----------
+
     def _start_game(self):
         pygame.time.delay(120)
         self.state = "name_input"

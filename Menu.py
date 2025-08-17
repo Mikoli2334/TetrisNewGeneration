@@ -14,7 +14,7 @@ class Menu:
         self.title_font = f.get("title") or pygame.font.SysFont("Comic Sans", 72, bold=True)
         self.font =f.get("menu") or pygame.font.SysFont("Comic Sans", 48)
 
-        self.options = ["Start Game", "High Scores", "Settings", "Quit"]  # добавили Settings
+        self.options = ["Start Game", "High Scores", "Settings", "Quit"]
         self.actions = [self.on_start, self.on_scores, self.on_settings, self.on_quit]
 
         self.selected_index = -1
